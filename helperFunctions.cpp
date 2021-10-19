@@ -8,6 +8,8 @@
 #include <cstring>
 #include <fstream>
 #include "helperFunctions.h"
+#include <glm/glm.hpp>
+#include "glm/ext.hpp"
 using namespace std;
 
 SceneObject::SceneObject(string fname, glm::vec3 worldPosIn, glm::vec3 scaleIn, glm::vec3 eulerAnglesIn) {
@@ -22,17 +24,16 @@ SceneObject::SceneObject(string fname, glm::vec3 worldPosIn, glm::vec3 scaleIn, 
 
 void SceneObject::updateModelMat(glm::vec3 deltaWorldPos, glm::vec3 deltaScale, glm::vec3 deltaEulerAngles) {
    worldPos += deltaWorldPos;
-   scale += deltaScale;
+   if (scale.x + deltaScale.x > 0 && scale.y + deltaScale.y > 0 && scale.z + deltaScale.z > 0) scale += deltaScale;
    eulerAngles += deltaEulerAngles;
    buildModelMat();
 }
 
 void SceneObject::buildModelMat() {
-   glm::mat4 scaleMat = glm::mat4(1.0);
-   scaleMat[0] *= scale.x;
-   scaleMat[1] *= scale.y;
-   scaleMat[2] *= scale.z;
-   modelMat = scaleMat;
+   modelMat = glm::scale(glm::mat4(1.0), scale);
+   modelMat = glm::rotate(modelMat, eulerAngles.x, glm::vec3(1.0, 0.0, 0.0));
+   modelMat = glm::rotate(modelMat, eulerAngles.y, glm::vec3(0.0, 1.0, 0.0));
+   modelMat = glm::rotate(modelMat, eulerAngles.z, glm::vec3(0.0, 0.0, 1.0));
 }
 
 vector<Triangle> readVertexData(string filename) {

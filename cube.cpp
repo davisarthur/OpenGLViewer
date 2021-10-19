@@ -93,8 +93,7 @@ int main() {
 
     glm::mat4 lookAt = glm::lookAt(glm::vec3(0.5, 1.0, 4.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
     glm::mat4 projMatrix = glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, -10.0f, 10.0f);
-    glm::mat4 projMatrix = glm::ortho(-500.0f, 500.0f, -500.0f, 500.0f, -100.0f, 100.0f);
-    //glm::mat4 transformMatrix = projMatrix * lookAt;
+    glm::mat4 transformMatrix = projMatrix * lookAt;
 
     GLint modelMatID = glGetUniformLocation(shaderProgram, "modelMatrix");
     GLint transformMatID = glGetUniformLocation(shaderProgram, "transformMatrix");
@@ -153,9 +152,17 @@ int main() {
         if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
             cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.01, 0.01, 0.01), glm::vec3(0.0, 0.0, 0.0));
         }
-
         else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
             cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(-0.01, -0.01, -0.01), glm::vec3(0.0, 0.0, 0.0));
+        }
+        else if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
+            cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.02, 0.0, 0.0));
+        }
+        else if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS) {
+            cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.02, 0.0));
+        }
+        else if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) {
+            cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.02));
         }
     }
 
