@@ -100,8 +100,14 @@ int main() {
     glm::mat4 projMatrix = glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, -10.0f, 10.0f);
     glm::mat4 transformMatrix = projMatrix * lookAt;
 
-    GLint pMatID = glGetUniformLocation(shaderProgram, "transformMatrix");
-    glUniformMatrix4fv(pMatID, 1, GL_FALSE, glm::value_ptr(transformMatrix));
+    // scale factor
+    GLfloat scaleFactor = 1.0f;
+    GLfloat scaleInterval = 0.1f;
+
+    GLint scaleID = glGetUniformLocation(shaderProgram, "scaleFactor");
+    GLint transformMatID = glGetUniformLocation(shaderProgram, "transformMatrix");
+    glUniformMatrix4fv(transformMatID, 1, GL_FALSE, glm::value_ptr(transformMatrix));
+    glUniform1f(scaleID, scaleFactor);
 
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
@@ -140,7 +146,8 @@ int main() {
 
         // draw our first triangle
         glUseProgram(shaderProgram);
-        glUniformMatrix4fv(pMatID, 1, GL_FALSE, glm::value_ptr(transformMatrix));
+        glUniformMatrix4fv(transformMatID, 1, GL_FALSE, glm::value_ptr(transformMatrix));
+        glUniform1f(scaleID, scaleFactor);
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
         glDrawArrays(GL_TRIANGLES, 0, triangles.size() * 3);
         // glBindVertexArray(0); // no need to unbind it every time 
@@ -155,7 +162,8 @@ int main() {
         if (state == GLFW_PRESS && !pressed) {
             pressed = true;
             std::cout << "Scaling up!" << std::endl;
-            
+            scaleFactor += scaleInterval;
+            cout << "Scale factor: " << scaleFactor << "\n";
         }
         else if (state == GLFW_RELEASE) {
             pressed = false;
