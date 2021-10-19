@@ -89,23 +89,17 @@ int main() {
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    vector<Triangle> triangles = readVertexData("data/cube.obj");
-    
-    int numBytes = triangles.size() * sizeof(triangles[0]);
-    int vertexSize = sizeof(triangles[0].vertex1);
-    glm::mat4 modelMatrix(1.0f);
+    SceneObject cube("data/cube.obj", glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.0, 0.0, 0.0));
+
     glm::mat4 lookAt = glm::lookAt(glm::vec3(0.5, 1.0, 4.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
     glm::mat4 projMatrix = glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, -10.0f, 10.0f);
-    glm::mat4 transformMatrix = projMatrix * lookAt;
+    glm::mat4 projMatrix = glm::ortho(-500.0f, 500.0f, -500.0f, 500.0f, -100.0f, 100.0f);
+    //glm::mat4 transformMatrix = projMatrix * lookAt;
 
-    // scale factor
-    GLfloat scaleFactor = 1.0f;
-    GLfloat scaleInterval = 0.01f;
-
-    GLint scaleID = glGetUniformLocation(shaderProgram, "scaleFactor");
+    GLint modelMatID = glGetUniformLocation(shaderProgram, "modelMatrix");
     GLint transformMatID = glGetUniformLocation(shaderProgram, "transformMatrix");
     glUniformMatrix4fv(transformMatID, 1, GL_FALSE, glm::value_ptr(transformMatrix));
-    glUniform1f(scaleID, scaleFactor);
+    glUniformMatrix4fv(modelMatID, 1, GL_FALSE, glm::value_ptr(cube.modelMat));
 
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
@@ -114,7 +108,7 @@ int main() {
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, numBytes, triangles.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, cube.numBytes, cube.triangles.data(), GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -145,9 +139,9 @@ int main() {
         // draw our first triangle
         glUseProgram(shaderProgram);
         glUniformMatrix4fv(transformMatID, 1, GL_FALSE, glm::value_ptr(transformMatrix));
-        glUniform1f(scaleID, scaleFactor);
+        glUniformMatrix4fv(modelMatID, 1, GL_FALSE, glm::value_ptr(cube.modelMat));
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        glDrawArrays(GL_TRIANGLES, 0, triangles.size() * 3);
+        glDrawArrays(GL_TRIANGLES, 0, cube.triangles.size() * 3);
         // glBindVertexArray(0); // no need to unbind it every time 
  
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -157,15 +151,11 @@ int main() {
 
         // respond to user input (based off of example: https://www.glfw.org/docs/3.3/input_guide.html#input_keyboard)
         if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
-            std::cout << "Scaling up!" << std::endl;
-            scaleFactor += scaleInterval;
-            cout << "Scale factor: " << scaleFactor << "\n";
+            cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.01, 0.01, 0.01), glm::vec3(0.0, 0.0, 0.0));
         }
 
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-            std::cout << "Scaling down!" << std::endl;
-            scaleFactor -= scaleInterval;
-            cout << "Scale factor: " << scaleFactor << "\n";
+        else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+            cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(-0.01, -0.01, -0.01), glm::vec3(0.0, 0.0, 0.0));
         }
     }
 

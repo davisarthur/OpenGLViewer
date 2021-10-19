@@ -10,6 +10,31 @@
 #include "helperFunctions.h"
 using namespace std;
 
+SceneObject::SceneObject(string fname, glm::vec3 worldPosIn, glm::vec3 scaleIn, glm::vec3 eulerAnglesIn) {
+   triangles = readVertexData(fname);
+   numBytes = triangles.size() * sizeof(triangles[0]);
+   vertexSize = sizeof(triangles[0].vertex1);
+   worldPos = worldPosIn;
+   scale = scaleIn;
+   eulerAngles = eulerAnglesIn;
+   buildModelMat();
+}
+
+void SceneObject::updateModelMat(glm::vec3 deltaWorldPos, glm::vec3 deltaScale, glm::vec3 deltaEulerAngles) {
+   worldPos += deltaWorldPos;
+   scale += deltaScale;
+   eulerAngles += deltaEulerAngles;
+   buildModelMat();
+}
+
+void SceneObject::buildModelMat() {
+   glm::mat4 scaleMat = glm::mat4(1.0);
+   scaleMat[0] *= scale.x;
+   scaleMat[1] *= scale.y;
+   scaleMat[2] *= scale.z;
+   modelMat = scaleMat;
+}
+
 vector<Triangle> readVertexData(string filename) {
    string line;
    ifstream myfile(filename);
