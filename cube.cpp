@@ -87,8 +87,6 @@ int main() {
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    bool pressed = false;
-
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     vector<Triangle> triangles = readVertexData("data/cube.obj");
@@ -102,7 +100,7 @@ int main() {
 
     // scale factor
     GLfloat scaleFactor = 1.0f;
-    GLfloat scaleInterval = 0.1f;
+    GLfloat scaleInterval = 0.01f;
 
     GLint scaleID = glGetUniformLocation(shaderProgram, "scaleFactor");
     GLint transformMatID = glGetUniformLocation(shaderProgram, "transformMatrix");
@@ -158,15 +156,16 @@ int main() {
         glfwPollEvents();
 
         // respond to user input (based off of example: https://www.glfw.org/docs/3.3/input_guide.html#input_keyboard)
-        int state = glfwGetKey(window, GLFW_KEY_U);
-        if (state == GLFW_PRESS && !pressed) {
-            pressed = true;
+        if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
             std::cout << "Scaling up!" << std::endl;
             scaleFactor += scaleInterval;
             cout << "Scale factor: " << scaleFactor << "\n";
         }
-        else if (state == GLFW_RELEASE) {
-            pressed = false;
+
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+            std::cout << "Scaling down!" << std::endl;
+            scaleFactor -= scaleInterval;
+            cout << "Scale factor: " << scaleFactor << "\n";
         }
     }
 

@@ -4,5 +4,5 @@ uniform mat4 transformMatrix;
 uniform float scaleFactor;
 void main()
 {
-   gl_Position = transformMatrix * scaleFactor * vec4(aPos, 1.0);
+   gl_Position = transformMatrix * vec4(aPos.x * scaleFactor, aPos.y * scaleFactor, aPos.z * scaleFactor, 1.0);
 }
