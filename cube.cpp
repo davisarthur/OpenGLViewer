@@ -10,6 +10,7 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
+void readZBuffer(GLfloat* zBufferData);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -123,9 +124,16 @@ int main() {
     // uncomment this call to draw in wireframe polygons.
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+    // use z-buffer
+    glEnable(GL_DEPTH_TEST);
+    GLfloat zBufferData[SCR_HEIGHT * SCR_WIDTH];
+
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window)) {
+        // clear z buffer
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  
+
         // input
         // -----
         processInput(window);
@@ -164,6 +172,9 @@ int main() {
         else if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) {
             cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.02));
         }
+        else if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+            readZBuffer(&zBufferData[0]);
+        }
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:
@@ -191,4 +202,13 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
+}
+
+void readZBuffer(GLfloat* zBufferData) {
+    glReadPixels(0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_COMPONENT, GL_FLOAT, zBufferData);
+    for (int i = 0; i < SCR_WIDTH * SCR_HEIGHT; i++) {
+        int x = i % SCR_WIDTH;
+        int y = i / SCR_WIDTH;
+        cout << "(" << x << ", " << y << "):" << zBufferData[i] << endl;
+    }
 }
