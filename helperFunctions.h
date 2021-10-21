@@ -1,10 +1,18 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <string>
+#include <map>
 using namespace std;
+
+struct Material {
+   glm::vec3 ambient;
+   glm::vec3 diffuse;
+   glm::vec3 specular;
+};
 
 struct vertexData {
    glm::vec3 pos;
+   struct Material mat;
 };
 
 struct Triangle {
@@ -33,5 +41,7 @@ class SceneObject {
 string readFile(string fileName);
 
 vector<Triangle> readVertexData(string fileName);
+
+map<string, Material> readMaterialData(string fileName);
 
 vector<string> split(string str, char del);

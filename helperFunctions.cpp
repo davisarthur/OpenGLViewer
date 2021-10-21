@@ -7,6 +7,7 @@
 #include <iostream>
 #include <cstring>
 #include <fstream>
+#include <map>
 #include "helperFunctions.h"
 #include <glm/glm.hpp>
 #include "glm/ext.hpp"
@@ -41,11 +42,21 @@ vector<Triangle> readVertexData(string filename) {
    ifstream myfile(filename);
    vector<vertexData> vertices;
    vector<Triangle> triangles;
+   map<string, Material> materials;
+   Material currentMaterial;
    if (myfile.is_open()) {
       while (getline(myfile, line)) {
          vector<string> tokens = split(line, ' ');
          if (tokens.size() == 0) {
             continue;
+         }
+         else if (tokens[0] == "mtllib") {
+            string mtl_fname = tokens[1];
+            materials = readMaterialData(mtl_fname);
+         }
+         else if (tokens[0] == "usemtl") {
+            string currentMaterialName = tokens[1];
+            currentMaterial = materials.find(currentMaterialName)->second;
          }
          else if (tokens[0] == "v") {
             float x = std::stof(tokens[1]);
@@ -53,6 +64,7 @@ vector<Triangle> readVertexData(string filename) {
             float z = std::stof(tokens[3]);
             struct vertexData vertex;
             vertex.pos = glm::vec3(x, y, z);
+            vertex.mat = currentMaterial;
             vertices.push_back(vertex);
          }
          else if (tokens[0] == "f") {
@@ -84,8 +96,58 @@ vector<Triangle> readVertexData(string filename) {
    }
 
    else cout << "Unable to open file"; 
-
+   
    return triangles;
+}
+
+map<string, Material> readMaterialData(string fileName) {
+   string line;
+   ifstream myfile(fileName);
+   map<string, Material> materials;
+   string currentName = "";
+   Material currentMat;
+   if (myfile.is_open()) {
+      while (getline(myfile, line)) {
+         vector<string> tokens = split(line, ' ');
+         if (tokens.size() == 0) {
+            continue;
+         }
+         else if (tokens[0] == "newmtl") {
+            if (currentName != "") {
+               materials.insert(pair<string, Material>(currentName, currentMat));
+            }
+            currentName = tokens[1];
+            struct Material mat;
+            currentMat = mat;
+         }
+         else if (tokens[0] == "Ka") {
+            float x = std::stof(tokens[1]);
+            float y = std::stof(tokens[2]);
+            float z = std::stof(tokens[3]);
+            currentMat.ambient = glm::vec3(x, y, z);
+         }
+         else if (tokens[0] == "Kd") {
+            float x = std::stof(tokens[1]);
+            float y = std::stof(tokens[2]);
+            float z = std::stof(tokens[3]);
+            currentMat.diffuse = glm::vec3(x, y, z);
+         }
+         else if (tokens[0] == "Ks") {
+            float x = std::stof(tokens[1]);
+            float y = std::stof(tokens[2]);
+            float z = std::stof(tokens[3]);
+            currentMat.specular = glm::vec3(x, y, z);
+         }
+      }
+      myfile.close();
+   }
+
+   else cout << "Unable to open file";
+
+   if (currentName != "") {
+      materials.insert(pair<string, Material>(currentName, currentMat));
+   }
+   return materials;
 }
 
 // String tokenizer based on the tutorial from https://www.geeksforgeeks.org/how-to-split-a-string-in-cc-python-and-java/
