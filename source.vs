@@ -1,8 +1,9 @@
 #version 330 core
 layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec3 Ka;
-layout (location = 2) in vec3 Kd;
-layout (location = 3) in vec3 Ks;
+layout (location = 1) in vec3 normal;
+layout (location = 2) in vec3 Ka;
+layout (location = 3) in vec3 Kd;
+layout (location = 4) in vec3 Ks;
 uniform mat4 transformMatrix;
 uniform mat4 modelMatrix;
 out vec4 color;

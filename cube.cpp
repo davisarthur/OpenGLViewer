@@ -92,6 +92,11 @@ int main() {
     // ------------------------------------------------------------------
     SceneObject cube("data/cube.obj", glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.0, 0.0, 0.0));
 
+    for (int i = 0; i < cube.triangles.size(); i++) {
+        cout << cube.triangles[i].vertex1.normal.y << endl;
+        cout << cube.vertexSize << endl;
+    }
+
     glm::mat4 lookAt = glm::lookAt(glm::vec3(0.5, 1.0, 4.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
     glm::mat4 projMatrix = glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, -10.0f, 10.0f);
     glm::mat4 transformMatrix = projMatrix * lookAt;
@@ -112,6 +117,14 @@ int main() {
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, cube.vertexSize, (void*)0);
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, cube.vertexSize, (void*)(sizeof(float) * 3));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, cube.vertexSize, (void*)(sizeof(float) * 6));
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, cube.vertexSize, (void*)(sizeof(float) * 9));
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, cube.vertexSize, (void*)(sizeof(float) * 12));
+    glEnableVertexAttribArray(4);
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0); 
