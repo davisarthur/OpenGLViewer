@@ -4,10 +4,16 @@
 #include <map>
 using namespace std;
 
+struct DirectionalLight {
+   float intensity;
+   glm::vec3 dir;
+};
+
 struct Material {
    glm::vec3 ambient;
    glm::vec3 diffuse;
    glm::vec3 specular;
+   float phongExp;
 };
 
 struct vertexData {

@@ -88,21 +88,32 @@ int main() {
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    // set up vertex data (and buffer(s)) and configure vertex attributes
-    // ------------------------------------------------------------------
+    // light source initialization
+    DirectionalLight lightSource;
+    lightSource.intensity = 1.0f;
+    lightSource.dir = glm::vec3(0.0, 1.0, 0.0);
+
+    // cube initialization
     SceneObject cube("data/cube.obj", glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.0, 0.0, 0.0));
+    
+    // camera parameter initialization
+    glm::vec3 eye = glm::vec3(0.5, 1.0, 4.0);
+    glm::vec3 center = glm::vec3(0.0, 0.0, 0.0);
+    glm::vec3 up = glm::vec3(0.0, 1.0, 0.0);
 
-    for (int i = 0; i < cube.triangles.size(); i++) {
-        cout << cube.triangles[i].vertex1.normal.y << endl;
-        cout << cube.vertexSize << endl;
-    }
-
-    glm::mat4 lookAt = glm::lookAt(glm::vec3(0.5, 1.0, 4.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+    glm::mat4 lookAt = glm::lookAt(eye, center, up);
     glm::mat4 projMatrix = glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, -10.0f, 10.0f);
     glm::mat4 transformMatrix = projMatrix * lookAt;
 
     GLint modelMatID = glGetUniformLocation(shaderProgram, "modelMatrix");
     GLint transformMatID = glGetUniformLocation(shaderProgram, "transformMatrix");
+    GLint intensityID = glGetUniformLocation(shaderProgram, "intensity");
+    GLint lightDirID = glGetUniformLocation(shaderProgram, "lightDir");
+    GLint eyeID = glGetUniformLocation(shaderProgram, "eyeDir");
+    
+    glUniform1f(intensityID, lightSource.intensity);
+    glUniform3f(lightDirID, lightSource.dir.x, lightSource.dir.y, lightSource.dir.z);
+    glUniform3f(eyeID, eye.x, eye.y, eye.z);
     glUniformMatrix4fv(transformMatID, 1, GL_FALSE, glm::value_ptr(transformMatrix));
     glUniformMatrix4fv(modelMatID, 1, GL_FALSE, glm::value_ptr(cube.modelMat));
 
@@ -125,6 +136,8 @@ int main() {
     glEnableVertexAttribArray(3);
     glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, cube.vertexSize, (void*)(sizeof(float) * 12));
     glEnableVertexAttribArray(4);
+    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, cube.vertexSize, (void*)(sizeof(float) * 15));
+    glEnableVertexAttribArray(5);
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0); 
@@ -135,7 +148,7 @@ int main() {
 
 
     // uncomment this call to draw in wireframe polygons.
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // use z-buffer
     glEnable(GL_DEPTH_TEST);
@@ -158,6 +171,8 @@ int main() {
 
         // draw our first triangle
         glUseProgram(shaderProgram);
+        glUniform1f(intensityID, lightSource.intensity);
+        glUniform3f(lightDirID, lightSource.dir.x, lightSource.dir.y, lightSource.dir.z);
         glUniformMatrix4fv(transformMatID, 1, GL_FALSE, glm::value_ptr(transformMatrix));
         glUniformMatrix4fv(modelMatID, 1, GL_FALSE, glm::value_ptr(cube.modelMat));
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized

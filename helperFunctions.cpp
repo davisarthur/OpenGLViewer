@@ -146,6 +146,9 @@ map<string, Material> readMaterialData(string fileName) {
             float z = std::stof(tokens[3]);
             currentMat.specular = glm::vec3(x, y, z);
          }
+         else if (tokens[0] == "Ns") {
+            currentMat.phongExp = std::stof(tokens[1]);
+         }
       }
       myfile.close();
    }
