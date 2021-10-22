@@ -44,6 +44,7 @@ vector<Triangle> readVertexData(string filename) {
    vector<Triangle> triangles;
    map<string, Material> materials;
    Material currentMaterial;
+   int normalCounter = 0;
    if (myfile.is_open()) {
       while (getline(myfile, line)) {
          vector<string> tokens = split(line, ' ');
@@ -52,7 +53,7 @@ vector<Triangle> readVertexData(string filename) {
          }
          else if (tokens[0] == "mtllib") {
             string mtl_fname = tokens[1];
-            materials = readMaterialData(mtl_fname);
+            materials = readMaterialData("data/" + mtl_fname);
          }
          else if (tokens[0] == "usemtl") {
             string currentMaterialName = tokens[1];
@@ -66,6 +67,13 @@ vector<Triangle> readVertexData(string filename) {
             vertex.pos = glm::vec3(x, y, z);
             vertex.mat = currentMaterial;
             vertices.push_back(vertex);
+         }
+         else if (tokens[0] == "vn") {
+            float x = std::stof(tokens[1]);
+            float y = std::stof(tokens[2]);
+            float z = std::stof(tokens[3]);
+            vertices[normalCounter].normal = glm::vec3(x, y, z);
+            normalCounter++;
          }
          else if (tokens[0] == "f") {
             vector<int> indeces;
@@ -95,7 +103,7 @@ vector<Triangle> readVertexData(string filename) {
       myfile.close();
    }
 
-   else cout << "Unable to open file"; 
+   else cout << "Unable to open file: " << filename; 
    
    return triangles;
 }
@@ -142,7 +150,7 @@ map<string, Material> readMaterialData(string fileName) {
       myfile.close();
    }
 
-   else cout << "Unable to open file";
+   else cout << "Unable to open file: " << fileName;
 
    if (currentName != "") {
       materials.insert(pair<string, Material>(currentName, currentMat));
@@ -188,7 +196,7 @@ string readFile(string fileName) {
       myfile.close();
    }
 
-   else cout << "Unable to open file";
+   else cout << "Unable to open file: " << fileName;
    
    return output;
 }

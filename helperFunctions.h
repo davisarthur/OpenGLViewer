@@ -12,6 +12,7 @@ struct Material {
 
 struct vertexData {
    glm::vec3 pos;
+   glm::vec3 normal;
    struct Material mat;
 };
 
