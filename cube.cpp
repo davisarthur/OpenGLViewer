@@ -43,11 +43,11 @@ int main() {
     glewInit();
 
     // read vertex shader
-    string vertexShaderSourceString = readFile("source.vs");
+    string vertexShaderSourceString = readFile("phong.vs");
     char* vertexShaderSource = &vertexShaderSourceString[0];
 
     // read fragment shader
-    string fragmentShaderSourceString = readFile("source.fs");
+    string fragmentShaderSourceString = readFile("phong.fs");
     char* fragmentShaderSource = &fragmentShaderSourceString[0];
 
     // build and compile our shader program

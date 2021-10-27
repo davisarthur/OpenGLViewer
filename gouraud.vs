@@ -20,5 +20,5 @@ void main()
    vec3 diffuse = Kd * max(0, dot(lightDir, transformedNormal));
    vec3 reflectDir = -lightDir + 2 * dot(lightDir, transformedNormal) * transformedNormal;
    vec3 specular = Ks * pow(max(0, dot(eyeDir, reflectDir)), phongExp);
-   color = vec4(ambient + diffuse, 1);
+   color = vec4(ambient + diffuse + specular, 1);
 }
