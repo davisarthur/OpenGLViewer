@@ -11,9 +11,17 @@ out vec4 FragColor;
 void main()
 {
    vec3 ambient = Ka;
-   vec3 diffuse = Kd * max(0, dot(lightDir, transformedNormal));
-   vec3 reflectDir = -lightDir + 2 * dot(lightDir, transformedNormal) * transformedNormal;
-   vec3 specular = Ks * pow(max(0, dot(eyeDir, reflectDir)), phongExp);
-   FragColor = vec4(ambient + diffuse, 1);
+   vec3 diffuse = Kd * max(0.0, dot(lightDir, transformedNormal));
+   vec3 h = normalize(lightDir + transformedNormal);
+   vec3 specular;
+   float specularIntensity = pow(max(0.0, dot(transformedNormal, h)), phongExp);
+   // pow operation can return Nan eg. pow(0, 0)
+   if (isnan(specularIntensity)) {
+      specular = vec3(0.0);
+   }
+   else {
+      specular = Ks * pow(max(0.0, dot(transformedNormal, h)), phongExp);
+   }
+   FragColor = vec4(ambient + diffuse + specular, 1.0);
 }
 

@@ -13,6 +13,13 @@
 #include "glm/ext.hpp"
 using namespace std;
 
+Material::Material() {
+   ambient = glm::vec3(0.0);
+   diffuse = glm::vec3(0.0);
+   specular = glm::vec3(0.0);
+   phongExp = 100.0f;
+}
+
 SceneObject::SceneObject(string fname, glm::vec3 worldPosIn, glm::vec3 scaleIn, glm::vec3 eulerAnglesIn) {
    triangles = readVertexData(fname);
    numBytes = triangles.size() * sizeof(triangles[0]);
@@ -43,7 +50,7 @@ vector<Triangle> readVertexData(string filename) {
    vector<vertexData> vertices;
    vector<Triangle> triangles;
    map<string, Material> materials;
-   Material currentMaterial;
+   Material currentMaterial = Material();
    int normalCounter = 0;
    if (myfile.is_open()) {
       while (getline(myfile, line)) {
@@ -113,7 +120,7 @@ map<string, Material> readMaterialData(string fileName) {
    ifstream myfile(fileName);
    map<string, Material> materials;
    string currentName = "";
-   Material currentMat;
+   Material currentMat = Material();
    if (myfile.is_open()) {
       while (getline(myfile, line)) {
          vector<string> tokens = split(line, ' ');
@@ -125,8 +132,7 @@ map<string, Material> readMaterialData(string fileName) {
                materials.insert(pair<string, Material>(currentName, currentMat));
             }
             currentName = tokens[1];
-            struct Material mat;
-            currentMat = mat;
+            currentMat = Material();
          }
          else if (tokens[0] == "Ka") {
             float x = std::stof(tokens[1]);

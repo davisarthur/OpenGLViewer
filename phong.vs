@@ -15,7 +15,7 @@ out float phongExp;
 void main()
 {
    gl_Position = transformMatrix * modelMatrix * vec4(aPos, 1.0);
-   vec4 transformedNormal4 = transformMatrix * modelMatrix * vec4(normal, 1.0);
+   vec4 transformedNormal4 = -transformMatrix * modelMatrix * vec4(normal, 1.0);
    transformedNormal = vec3(transformedNormal4.x, transformedNormal4.y, transformedNormal4.z);
    Ka = KaIn;
    Kd = KdIn;

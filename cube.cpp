@@ -95,6 +95,10 @@ int main() {
 
     // cube initialization
     SceneObject cube("data/cube.obj", glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.0, 0.0, 0.0));
+    for (int i = 0; i < cube.triangles.size(); i++) {
+        cout << cube.triangles[i].vertex1.pos.x << ", " << cube.triangles[i].vertex1.pos.y << ", " << cube.triangles[i].vertex1.pos.z << "\n";
+        cout << cube.triangles[i].vertex1.normal.x << ", " << cube.triangles[i].vertex1.normal.y << ", " << cube.triangles[i].vertex1.normal.z << "\n\n";
+    }
     
     // camera parameter initialization
     glm::vec3 eye = glm::vec3(0.5, 1.0, 4.0);
@@ -110,10 +114,13 @@ int main() {
     GLint intensityID = glGetUniformLocation(shaderProgram, "intensity");
     GLint lightDirID = glGetUniformLocation(shaderProgram, "lightDir");
     GLint eyeID = glGetUniformLocation(shaderProgram, "eyeDir");
+
+    glm::vec3 eyeDir = -glm::normalize(eyeDir);
+    lightSource.dir = glm::normalize(lightSource.dir);
     
     glUniform1f(intensityID, lightSource.intensity);
     glUniform3f(lightDirID, lightSource.dir.x, lightSource.dir.y, lightSource.dir.z);
-    glUniform3f(eyeID, eye.x, eye.y, eye.z);
+    glUniform3f(eyeID, eyeDir.x, eyeDir.y, eyeDir.z);
     glUniformMatrix4fv(transformMatID, 1, GL_FALSE, glm::value_ptr(transformMatrix));
     glUniformMatrix4fv(modelMatID, 1, GL_FALSE, glm::value_ptr(cube.modelMat));
 
