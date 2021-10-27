@@ -48,10 +48,10 @@ vector<Triangle> readVertexData(string filename) {
    string line;
    ifstream myfile(filename);
    vector<vertexData> vertices;
+   vector<glm::vec3> vertexNormals;
    vector<Triangle> triangles;
    map<string, Material> materials;
    Material currentMaterial = Material();
-   int normalCounter = 0;
    if (myfile.is_open()) {
       while (getline(myfile, line)) {
          vector<string> tokens = split(line, ' ');
@@ -79,30 +79,44 @@ vector<Triangle> readVertexData(string filename) {
             float x = std::stof(tokens[1]);
             float y = std::stof(tokens[2]);
             float z = std::stof(tokens[3]);
-            vertices[normalCounter].normal = glm::vec3(x, y, z);
-            normalCounter++;
+            vertexNormals.push_back(glm::vec3(x, y, z));
          }
          else if (tokens[0] == "f") {
             vector<int> indeces;
+            vector<int> normalIndices;
 
             // read in vertex indeces of face
             for (int i = 1; i < tokens.size(); i++) {
-               indeces.push_back(std::stoi(split(tokens[i], '/')[0]) - 1);
+               vector<string> faceStrings = split(tokens[i], '/');
+               indeces.push_back(std::stoi(faceStrings[0]) - 1);
+               normalIndices.push_back(std::stoi(faceStrings[faceStrings.size() - 1]) - 1);
             } 
 
             // create first triangle
             Triangle t1;
             t1.vertex1 = vertices[indeces[0]];
+            t1.vertex1.mat = currentMaterial;
+            t1.vertex1.normal = vertexNormals[normalIndices[0]];
             t1.vertex2 = vertices[indeces[1]];
+            t1.vertex2.mat = currentMaterial;
+            t1.vertex2.normal = vertexNormals[normalIndices[1]];
             t1.vertex3 = vertices[indeces[2]];
+            t1.vertex3.mat = currentMaterial;
+            t1.vertex3.normal = vertexNormals[normalIndices[2]];
             triangles.push_back(t1);
 
             // create any other triangles in that face
             for (int i = 0; i < tokens.size() - 4; i++) {
                Triangle t;
                t.vertex1 = vertices[indeces[0]];
+               t.vertex1.mat = currentMaterial;
+               t.vertex1.normal = vertexNormals[normalIndices[0]];
                t.vertex2 = vertices[indeces[i + 2]];
+               t.vertex2.mat = currentMaterial;
+               t.vertex2.normal = vertexNormals[normalIndices[i + 2]];
                t.vertex3 = vertices[indeces[i + 3]];
+               t.vertex3.mat = currentMaterial;
+               t.vertex3.normal = vertexNormals[normalIndices[i + 3]];
                triangles.push_back(t);
             }
          }

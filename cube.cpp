@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include "glm/ext.hpp"
-
+#include <math.h>
 #include <iostream>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -91,22 +91,24 @@ int main() {
     // light source initialization
     DirectionalLight lightSource;
     lightSource.intensity = 1.0f;
-    lightSource.dir = glm::vec3(0.0, 1.0, 0.0);
+    lightSource.dir = glm::vec3(0.5, 2.0, 1.0);
 
     // cube initialization
-    SceneObject cube("data/cube.obj", glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.0, 0.0, 0.0));
-    for (int i = 0; i < cube.triangles.size(); i++) {
-        cout << cube.triangles[i].vertex1.pos.x << ", " << cube.triangles[i].vertex1.pos.y << ", " << cube.triangles[i].vertex1.pos.z << "\n";
-        cout << cube.triangles[i].vertex1.normal.x << ", " << cube.triangles[i].vertex1.normal.y << ", " << cube.triangles[i].vertex1.normal.z << "\n\n";
-    }
-    
-    // camera parameter initialization
-    glm::vec3 eye = glm::vec3(0.5, 1.0, 4.0);
+    SceneObject cube("data/porsche.obj", glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.0, 0.0, 0.0));
+
+    // build camera matrix
+    //glm::vec3 eye = glm::vec3(0.0, 2.0, 4.0);
+    glm::vec3 eye = glm::vec3(0.0, 20.0, 200.0);
     glm::vec3 center = glm::vec3(0.0, 0.0, 0.0);
     glm::vec3 up = glm::vec3(0.0, 1.0, 0.0);
-
     glm::mat4 lookAt = glm::lookAt(eye, center, up);
-    glm::mat4 projMatrix = glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, -10.0f, 10.0f);
+
+    // build projection matrix
+    float fov = 60.0f * M_PI / 180.0f;
+    float aspect = (float) SCR_WIDTH / SCR_HEIGHT;
+    float znear = 10.0f;
+    float zfar = 1000.0f;
+    glm::mat4 projMatrix = glm::perspective(fov, aspect, znear, zfar);
     glm::mat4 transformMatrix = projMatrix * lookAt;
 
     GLint modelMatID = glGetUniformLocation(shaderProgram, "modelMatrix");

@@ -14,11 +14,19 @@ out vec4 color;
 void main()
 {
    gl_Position = transformMatrix * modelMatrix * vec4(aPos, 1.0);
-   vec4 transformedNormal4 = transformMatrix * modelMatrix * vec4(normal, 1.0);
+   vec4 transformedNormal4 = -transformMatrix * modelMatrix * vec4(normal, 1.0);
    vec3 transformedNormal = vec3(transformedNormal4.x, transformedNormal4.y, transformedNormal4.z);
    vec3 ambient = Ka;
    vec3 diffuse = Kd * max(0, dot(lightDir, transformedNormal));
    vec3 reflectDir = -lightDir + 2 * dot(lightDir, transformedNormal) * transformedNormal;
-   vec3 specular = Ks * pow(max(0, dot(eyeDir, reflectDir)), phongExp);
+   vec3 specular;
+   float specularIntensity = pow(max(0.0, dot(transformedNormal, h)), phongExp);
+   // pow operation can return Nan eg. pow(0, 0)
+   if (isnan(specularIntensity)) {
+      specular = vec3(0.0);
+   }
+   else {
+      specular = Ks * pow(max(0.0, dot(transformedNormal, h)), phongExp);
+   }
    color = vec4(ambient + diffuse + specular, 1);
 }
