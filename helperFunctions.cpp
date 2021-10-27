@@ -84,7 +84,7 @@ vector<Triangle> readVertexData(string filename) {
          else if (tokens[0] == "f") {
             vector<int> indeces;
             vector<int> normalIndices;
-
+            
             // read in vertex indeces of face
             for (int i = 1; i < tokens.size(); i++) {
                vector<string> faceStrings = split(tokens[i], '/');

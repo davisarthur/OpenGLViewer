@@ -43,11 +43,11 @@ int main() {
     glewInit();
 
     // read vertex shader
-    string vertexShaderSourceString = readFile("phong.vs");
+    string vertexShaderSourceString = readFile("gouraud.vs");
     char* vertexShaderSource = &vertexShaderSourceString[0];
 
     // read fragment shader
-    string fragmentShaderSourceString = readFile("phong.fs");
+    string fragmentShaderSourceString = readFile("gouraud.fs");
     char* fragmentShaderSource = &fragmentShaderSourceString[0];
 
     // build and compile our shader program
@@ -94,11 +94,10 @@ int main() {
     lightSource.dir = glm::vec3(0.5, 2.0, 1.0);
 
     // cube initialization
-    SceneObject cube("data/porsche.obj", glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.0, 0.0, 0.0));
+    SceneObject cube("data/pawn.obj", glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.0, 0.0, 0.0));
 
     // build camera matrix
-    //glm::vec3 eye = glm::vec3(0.0, 2.0, 4.0);
-    glm::vec3 eye = glm::vec3(0.0, 20.0, 200.0);
+    glm::vec3 eye = glm::vec3(0.0, 200.0, 1200.0);
     glm::vec3 center = glm::vec3(0.0, 0.0, 0.0);
     glm::vec3 up = glm::vec3(0.0, 1.0, 0.0);
     glm::mat4 lookAt = glm::lookAt(eye, center, up);
@@ -106,8 +105,8 @@ int main() {
     // build projection matrix
     float fov = 60.0f * M_PI / 180.0f;
     float aspect = (float) SCR_WIDTH / SCR_HEIGHT;
-    float znear = 10.0f;
-    float zfar = 1000.0f;
+    float znear = 50.0f;
+    float zfar = 10000.0f;
     glm::mat4 projMatrix = glm::perspective(fov, aspect, znear, zfar);
     glm::mat4 transformMatrix = projMatrix * lookAt;
 
