@@ -42,12 +42,26 @@ int main() {
     // // glew: load all OpenGL function pointers
     glewInit();
 
-    // read vertex shader
-    string vertexShaderSourceString = readFile("gouraud.vs");
-    char* vertexShaderSource = &vertexShaderSourceString[0];
+    string shadingCode;
+    cout << "Enter 'p' for Phong shading or 'g' for Gouraud shading: ";
+    cin >> shadingCode;
 
-    // read fragment shader
-    string fragmentShaderSourceString = readFile("gouraud.fs");
+    string vertexShaderSourceString;
+    string fragmentShaderSourceString;
+    if (shadingCode == "p") {
+        vertexShaderSourceString = readFile("phong.vs");
+        fragmentShaderSourceString = readFile("phong.fs");
+    }
+    else if (shadingCode == "g") {
+        vertexShaderSourceString = readFile("gouraud.vs");
+        fragmentShaderSourceString = readFile("gouraud.fs");
+    }
+    else {
+        cout << "Invalid shading option! Defaulting to Phong shading." << endl;
+        vertexShaderSourceString = readFile("phong.vs");
+        fragmentShaderSourceString = readFile("phong.fs");
+    }
+    char* vertexShaderSource = &vertexShaderSourceString[0];
     char* fragmentShaderSource = &fragmentShaderSourceString[0];
 
     // build and compile our shader program
