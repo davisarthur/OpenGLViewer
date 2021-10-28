@@ -94,10 +94,10 @@ int main() {
     lightSource.dir = glm::vec3(0.5, 2.0, 1.0);
 
     // cube initialization
-    SceneObject cube("data/porsche.obj", glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.0, 0.0, 0.0));
+    SceneObject cube("data/pawn.obj", glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.0, 0.0, 0.0));
 
     // build camera matrix
-    glm::vec3 eye = glm::vec3(0.0, 20.0, 200.0);
+    glm::vec3 eye = glm::vec3(0.0, 200.0, 1200.0);
     glm::vec3 center = glm::vec3(0.0, 0.0, 0.0);
     glm::vec3 up = glm::vec3(0.0, 1.0, 0.0);
     glm::mat4 lookAt = glm::lookAt(eye, center, up);
@@ -105,7 +105,7 @@ int main() {
     // build projection matrix
     float fov = 60.0f * M_PI / 180.0f;
     float aspect = (float) SCR_WIDTH / SCR_HEIGHT;
-    float znear = 20.0f;
+    float znear = 100.0f;
     float zfar = 10000.0f;
     glm::mat4 projMatrix = glm::perspective(fov, aspect, znear, zfar);
     glm::mat4 transformMatrix = projMatrix * lookAt;
@@ -194,21 +194,21 @@ int main() {
 
         // respond to user input (based off of example: https://www.glfw.org/docs/3.3/input_guide.html#input_keyboard)
         if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
-            cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.01, 0.01, 0.01), glm::vec3(0.0, 0.0, 0.0));
+            cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.01, 1.01, 1.01), glm::vec3(0.0, 0.0, 0.0));
         }
         else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-            cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(-0.01, -0.01, -0.01), glm::vec3(0.0, 0.0, 0.0));
+            cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.99, 0.99, 0.99), glm::vec3(0.0, 0.0, 0.0));
         }
         else if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
-            cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.02, 0.0, 0.0));
+            cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0), glm::vec3(0.02, 0.0, 0.0));
         }
         else if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS) {
-            cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.02, 0.0));
+            cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0), glm::vec3(0.0, 0.02, 0.0));
         }
         else if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) {
-            cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.02));
+            cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0), glm::vec3(0.0, 0.0, 0.02));
         }
-        else if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+        else if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
             readZBuffer(&zBufferData[0]);
         }
     }

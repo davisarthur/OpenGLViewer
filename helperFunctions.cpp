@@ -30,9 +30,9 @@ SceneObject::SceneObject(string fname, glm::vec3 worldPosIn, glm::vec3 scaleIn, 
    buildModelMat();
 }
 
-void SceneObject::updateModelMat(glm::vec3 deltaWorldPos, glm::vec3 deltaScale, glm::vec3 deltaEulerAngles) {
+void SceneObject::updateModelMat(glm::vec3 deltaWorldPos, glm::vec3 scaleFactor, glm::vec3 deltaEulerAngles) {
    worldPos += deltaWorldPos;
-   if (scale.x + deltaScale.x > 0 && scale.y + deltaScale.y > 0 && scale.z + deltaScale.z > 0) scale += deltaScale;
+   scale *= scaleFactor;
    eulerAngles += deltaEulerAngles;
    buildModelMat();
 }

@@ -15,7 +15,7 @@ void main()
 {
    gl_Position = transformMatrix * modelMatrix * vec4(aPos, 1.0);
    vec4 transformedNormal4 = modelMatrix * vec4(normal, 1.0);
-   vec3 transformedNormal = vec3(transformedNormal4.x, transformedNormal4.y, transformedNormal4.z);
+   vec3 transformedNormal = normalize(vec3(transformedNormal4.x, transformedNormal4.y, transformedNormal4.z));
    vec3 ambient = Ka;
    vec3 diffuse = Kd * max(0, dot(lightDir, transformedNormal));
    vec3 h = normalize(lightDir + transformedNormal);
