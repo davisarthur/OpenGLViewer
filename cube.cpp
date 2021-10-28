@@ -102,16 +102,16 @@ int main() {
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    // light source initialization
+    // model initialization
     DirectionalLight lightSource;
-    lightSource.intensity = 1.0f;
-    lightSource.dir = glm::vec3(0.5, 2.0, 1.0);
-
-    // cube initialization
-    SceneObject cube("data/pawn.obj", glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.0, 0.0, 0.0));
+    SceneObject model;
+    glm::vec3 eye;
+    float znear;
+    float zfar;
+    loadPawn(model, eye, znear, zfar, lightSource);
+    cout << eye.x << ", " << eye.y << ", " << eye.z << endl;
 
     // build camera matrix
-    glm::vec3 eye = glm::vec3(0.0, 200.0, 1200.0);
     glm::vec3 center = glm::vec3(0.0, 0.0, 0.0);
     glm::vec3 up = glm::vec3(0.0, 1.0, 0.0);
     glm::mat4 lookAt = glm::lookAt(eye, center, up);
@@ -119,8 +119,6 @@ int main() {
     // build projection matrix
     float fov = 60.0f * M_PI / 180.0f;
     float aspect = (float) SCR_WIDTH / SCR_HEIGHT;
-    float znear = 100.0f;
-    float zfar = 10000.0f;
     glm::mat4 projMatrix = glm::perspective(fov, aspect, znear, zfar);
     glm::mat4 transformMatrix = projMatrix * lookAt;
 
@@ -130,14 +128,14 @@ int main() {
     GLint lightDirID = glGetUniformLocation(shaderProgram, "lightDir");
     GLint eyeID = glGetUniformLocation(shaderProgram, "eyeDir");
 
-    glm::vec3 eyeDir = -glm::normalize(eyeDir);
+    glm::vec3 eyeDir = -glm::normalize(eye);
     lightSource.dir = glm::normalize(lightSource.dir);
     
     glUniform1f(intensityID, lightSource.intensity);
     glUniform3f(lightDirID, lightSource.dir.x, lightSource.dir.y, lightSource.dir.z);
     glUniform3f(eyeID, eyeDir.x, eyeDir.y, eyeDir.z);
     glUniformMatrix4fv(transformMatID, 1, GL_FALSE, glm::value_ptr(transformMatrix));
-    glUniformMatrix4fv(modelMatID, 1, GL_FALSE, glm::value_ptr(cube.modelMat));
+    glUniformMatrix4fv(modelMatID, 1, GL_FALSE, glm::value_ptr(model.modelMat));
 
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
@@ -146,19 +144,19 @@ int main() {
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, cube.numBytes, cube.triangles.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, model.numBytes, model.triangles.data(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, cube.vertexSize, (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, model.vertexSize, (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, cube.vertexSize, (void*)(sizeof(float) * 3));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, model.vertexSize, (void*)(sizeof(float) * 3));
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, cube.vertexSize, (void*)(sizeof(float) * 6));
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, model.vertexSize, (void*)(sizeof(float) * 6));
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, cube.vertexSize, (void*)(sizeof(float) * 9));
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, model.vertexSize, (void*)(sizeof(float) * 9));
     glEnableVertexAttribArray(3);
-    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, cube.vertexSize, (void*)(sizeof(float) * 12));
+    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, model.vertexSize, (void*)(sizeof(float) * 12));
     glEnableVertexAttribArray(4);
-    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, cube.vertexSize, (void*)(sizeof(float) * 15));
+    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, model.vertexSize, (void*)(sizeof(float) * 15));
     glEnableVertexAttribArray(5);
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
@@ -196,9 +194,9 @@ int main() {
         glUniform1f(intensityID, lightSource.intensity);
         glUniform3f(lightDirID, lightSource.dir.x, lightSource.dir.y, lightSource.dir.z);
         glUniformMatrix4fv(transformMatID, 1, GL_FALSE, glm::value_ptr(transformMatrix));
-        glUniformMatrix4fv(modelMatID, 1, GL_FALSE, glm::value_ptr(cube.modelMat));
+        glUniformMatrix4fv(modelMatID, 1, GL_FALSE, glm::value_ptr(model.modelMat));
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        glDrawArrays(GL_TRIANGLES, 0, cube.triangles.size() * 3);
+        glDrawArrays(GL_TRIANGLES, 0, model.triangles.size() * 3);
         // glBindVertexArray(0); // no need to unbind it every time 
  
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -208,19 +206,19 @@ int main() {
 
         // respond to user input (based off of example: https://www.glfw.org/docs/3.3/input_guide.html#input_keyboard)
         if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
-            cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.01, 1.01, 1.01), glm::vec3(0.0, 0.0, 0.0));
+            model.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.01, 1.01, 1.01), glm::vec3(0.0, 0.0, 0.0));
         }
         else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-            cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.99, 0.99, 0.99), glm::vec3(0.0, 0.0, 0.0));
+            model.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.99, 0.99, 0.99), glm::vec3(0.0, 0.0, 0.0));
         }
         else if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
-            cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0), glm::vec3(0.02, 0.0, 0.0));
+            model.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0), glm::vec3(0.02, 0.0, 0.0));
         }
         else if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS) {
-            cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0), glm::vec3(0.0, 0.02, 0.0));
+            model.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0), glm::vec3(0.0, 0.02, 0.0));
         }
         else if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) {
-            cube.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0), glm::vec3(0.0, 0.0, 0.02));
+            model.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0), glm::vec3(0.0, 0.0, 0.02));
         }
         else if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
             readZBuffer(&zBufferData[0]);

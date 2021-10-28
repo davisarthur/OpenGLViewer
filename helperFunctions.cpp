@@ -20,6 +20,15 @@ Material::Material() {
    phongExp = 100.0f;
 }
 
+SceneObject::SceneObject() {
+   numBytes = 0;
+   vertexSize = 0;
+   worldPos = glm::vec3(0.0);
+   scale = glm::vec3(0.0);
+   eulerAngles = glm::vec3(0.0);
+   modelMat = glm::mat4(0.0);
+}
+
 SceneObject::SceneObject(string fname, glm::vec3 worldPosIn, glm::vec3 scaleIn, glm::vec3 eulerAnglesIn) {
    triangles = readVertexData(fname);
    numBytes = triangles.size() * sizeof(triangles[0]);
@@ -222,4 +231,13 @@ string readFile(string fileName) {
    else cout << "Unable to open file: " << fileName;
    
    return output;
+}
+
+void loadPawn(SceneObject& model, glm::vec3& eye, float& znear, float& zfar, DirectionalLight& lightSource) {
+   model = SceneObject("data/pawn.obj", glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.0, 0.0, 0.0));
+   eye = glm::vec3(0.0, 200.0, 1200.0);
+   lightSource.intensity = 1.0f;
+   lightSource.dir = glm::vec3(0.5, 2.0, 1.0);
+   znear = 100.0f;
+   zfar = 10000.0f;
 }

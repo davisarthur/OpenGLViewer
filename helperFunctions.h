@@ -40,6 +40,7 @@ class SceneObject {
       glm::vec3 eulerAngles;
       glm::mat4 modelMat;
 
+      SceneObject();
       SceneObject(string fname, glm::vec3 worldPosIn, glm::vec3 scaleIn, glm::vec3 eulerAnglesIn);
       void updateModelMat(glm::vec3 deltaWorldPos, glm::vec3 deltaScale, glm::vec3 deltaEulerAngles);
    
@@ -54,3 +55,5 @@ vector<Triangle> readVertexData(string fileName);
 map<string, Material> readMaterialData(string fileName);
 
 vector<string> split(string str, char del);
+
+void loadPawn(SceneObject& model, glm::vec3& eye, float& znear, float& zfar, DirectionalLight& lightSource);
