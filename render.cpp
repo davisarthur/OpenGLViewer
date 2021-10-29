@@ -152,14 +152,13 @@ int main() {
     GLint transformMatID = glGetUniformLocation(shaderProgram, "transformMatrix");
     GLint intensityID = glGetUniformLocation(shaderProgram, "intensity");
     GLint lightDirID = glGetUniformLocation(shaderProgram, "lightDir");
-    GLint eyeID = glGetUniformLocation(shaderProgram, "eyeDir");
+    GLint eyeID = glGetUniformLocation(shaderProgram, "eye");
 
-    glm::vec3 eyeDir = -glm::normalize(eye);
     lightSource.dir = glm::normalize(lightSource.dir);
     
     glUniform1f(intensityID, lightSource.intensity);
     glUniform3f(lightDirID, lightSource.dir.x, lightSource.dir.y, lightSource.dir.z);
-    glUniform3f(eyeID, eyeDir.x, eyeDir.y, eyeDir.z);
+    glUniform3f(eyeID, eye.x, eye.y, eye.z);
     glUniformMatrix4fv(transformMatID, 1, GL_FALSE, glm::value_ptr(transformMatrix));
     glUniformMatrix4fv(modelMatID, 1, GL_FALSE, glm::value_ptr(model.modelMat));
 
@@ -299,7 +298,6 @@ void readZBuffer(GLfloat* zBufferData, int& zBufferSaveCount) {
             if (i > 0 && x == 0) {
                 myfile << endl;
             }
-            //myfile << "(" << x << ", " << y << "):" << zBufferData[i] << endl;
             myfile << zBufferData[i] << ", ";
         }
         myfile.close();

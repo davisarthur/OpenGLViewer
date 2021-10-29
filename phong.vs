@@ -7,6 +7,7 @@ layout (location = 4) in vec3 KsIn;
 layout (location = 5) in float phongExpIn;
 uniform mat4 transformMatrix;
 uniform mat4 modelMatrix;
+out vec4 vertexPosition;
 out vec3 transformedNormal;
 out vec3 Ka;
 out vec3 Kd;
@@ -15,6 +16,7 @@ out float phongExp;
 void main()
 {
    gl_Position = transformMatrix * modelMatrix * vec4(aPos, 1.0);
+   vertexPosition = modelMatrix * vec4(aPos, 1.0);
    vec4 transformedNormal4 = modelMatrix * vec4(normal, 1.0);
    transformedNormal = normalize(vec3(transformedNormal4.x, transformedNormal4.y, transformedNormal4.z));
    Ka = KaIn;
