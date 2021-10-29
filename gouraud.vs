@@ -20,13 +20,13 @@ void main()
    vec3 diffuse = Kd * max(0, dot(lightDir, transformedNormal));
    vec3 h = normalize(lightDir + transformedNormal);
    vec3 specular;
-   float specularIntensity = pow(max(0.0, dot(transformedNormal, h)), phongExp);
+   float specularIntensity = pow(max(0.0, dot(transformedNormal, h)), phongExp / 2.0);
    // pow operation can return Nan eg. pow(0, 0)
    if (isnan(specularIntensity)) {
       specular = vec3(0.0);
    }
    else {
-      specular = Ks * pow(max(0.0, dot(transformedNormal, h)), phongExp);
+      specular = Ks * specularIntensity;
    }
    color = vec4(ambient + diffuse + specular, 1);
 }

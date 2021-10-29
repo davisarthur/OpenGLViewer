@@ -7,10 +7,11 @@
 #include "glm/ext.hpp"
 #include <math.h>
 #include <iostream>
+#include <fstream>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
-void readZBuffer(GLfloat* zBufferData);
+void readZBuffer(GLfloat* zBufferData, int& zBufferSaveCount);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -43,7 +44,7 @@ int main() {
     glewInit();
 
     string shadingCode;
-    cout << "Enter 'p' for Phong shading or 'g' for Gouraud shading: ";
+    cout << "\nEnter 'p' for Phong shading or 'g' for Gouraud shading: ";
     cin >> shadingCode;
 
     string vertexShaderSourceString;
@@ -103,13 +104,38 @@ int main() {
     glDeleteShader(fragmentShader);
 
     // model initialization
+    string modelName;
+    cout << "\nModel Options: 'pawn', 'head', 'rose', 'soccerball', 'F16'" << endl;
+    cout << "\nEnter the name of the model you would like to render: ";
+    cin >> modelName;
+
     DirectionalLight lightSource;
     SceneObject model;
     glm::vec3 eye;
     float znear;
     float zfar;
-    loadPawn(model, eye, znear, zfar, lightSource);
-    cout << eye.x << ", " << eye.y << ", " << eye.z << endl;
+    if (modelName == "pawn") {
+        loadPawn(model, eye, znear, zfar, lightSource);
+    }
+    else if (modelName == "porsche") {
+        loadPorsche(model, eye, znear, zfar, lightSource);
+    }
+    else if (modelName == "head") {
+        loadHead(model, eye, znear, zfar, lightSource);
+    }
+    else if (modelName == "rose") {
+        loadRose(model, eye, znear, zfar, lightSource);
+    }
+    else if (modelName == "soccerball") {
+        loadSoccerBall(model, eye, znear, zfar, lightSource);
+    }
+    else if (modelName == "F16") {
+        loadF16(model, eye, znear, zfar, lightSource);
+    }
+    else {
+        cout << "Invalid model name! Defaulting to head model." << endl;
+        loadHead(model, eye, znear, zfar, lightSource);
+    }
 
     // build camera matrix
     glm::vec3 center = glm::vec3(0.0, 0.0, 0.0);
@@ -171,8 +197,11 @@ int main() {
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // use z-buffer
+    int zBufferSaveCount = 0;
     glEnable(GL_DEPTH_TEST);
     GLfloat zBufferData[SCR_HEIGHT * SCR_WIDTH];
+
+    bool reading = false;
 
     // render loop
     // -----------
@@ -221,7 +250,13 @@ int main() {
             model.updateModelMat(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0), glm::vec3(0.0, 0.0, 0.02));
         }
         else if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
-            readZBuffer(&zBufferData[0]);
+            if (!reading) {
+                readZBuffer(&zBufferData[0], zBufferSaveCount);
+                reading = true;
+            }
+        }
+        else if (glfwGetKey(window, GLFW_KEY_P) == GLFW_RELEASE) {
+            reading = false;
         }
     }
 
@@ -252,11 +287,22 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-void readZBuffer(GLfloat* zBufferData) {
-    glReadPixels(0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_COMPONENT, GL_FLOAT, zBufferData);
-    for (int i = 0; i < SCR_WIDTH * SCR_HEIGHT; i++) {
-        int x = i % SCR_WIDTH;
-        int y = i / SCR_WIDTH;
-        cout << "(" << x << ", " << y << "):" << zBufferData[i] << endl;
+void readZBuffer(GLfloat* zBufferData, int& zBufferSaveCount) {
+    glReadPixels(SCR_WIDTH / 2, SCR_HEIGHT / 2, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_COMPONENT, GL_FLOAT, zBufferData);
+    string baseName = "ZBufferSaves/save";
+    string fileExt = ".txt";
+    ofstream myfile(baseName + to_string(zBufferSaveCount) + fileExt);
+    zBufferSaveCount++;
+    if (myfile.is_open()) {
+        for (int i = 0; i < SCR_WIDTH * SCR_HEIGHT; i++) {
+            int x = i % SCR_WIDTH;
+            if (i > 0 && x == 0) {
+                myfile << endl;
+            }
+            //myfile << "(" << x << ", " << y << "):" << zBufferData[i] << endl;
+            myfile << zBufferData[i] << ", ";
+        }
+        myfile.close();
     }
+    else cout << "Unable to open file";
 }

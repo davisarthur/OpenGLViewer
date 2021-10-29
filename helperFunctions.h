@@ -57,3 +57,13 @@ map<string, Material> readMaterialData(string fileName);
 vector<string> split(string str, char del);
 
 void loadPawn(SceneObject& model, glm::vec3& eye, float& znear, float& zfar, DirectionalLight& lightSource);
+
+void loadPorsche(SceneObject& model, glm::vec3& eye, float& znear, float& zfar, DirectionalLight& lightSource);
+
+void loadHead(SceneObject& model, glm::vec3& eye, float& znear, float& zfar, DirectionalLight& lightSource);
+
+void loadRose(SceneObject& model, glm::vec3& eye, float& znear, float& zfar, DirectionalLight& lightSource);
+
+void loadSoccerBall(SceneObject& model, glm::vec3& eye, float& znear, float& zfar, DirectionalLight& lightSource);
+
+void loadF16(SceneObject& model, glm::vec3& eye, float& znear, float& zfar, DirectionalLight& lightSource);

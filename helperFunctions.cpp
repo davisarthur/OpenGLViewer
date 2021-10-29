@@ -234,10 +234,55 @@ string readFile(string fileName) {
 }
 
 void loadPawn(SceneObject& model, glm::vec3& eye, float& znear, float& zfar, DirectionalLight& lightSource) {
-   model = SceneObject("data/pawn.obj", glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.0, 0.0, 0.0));
-   eye = glm::vec3(0.0, 200.0, 1200.0);
+   model = SceneObject("data/pawn.obj", glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.0, 0.25 * M_PI / 2.0, 0.0));
+   eye = glm::vec3(0.0, 400.0, 1200.0);
    lightSource.intensity = 1.0f;
-   lightSource.dir = glm::vec3(0.5, 2.0, 1.0);
+   lightSource.dir = glm::vec3(2.0, 2.0, 5.0);
    znear = 100.0f;
    zfar = 10000.0f;
+}
+
+void loadPorsche(SceneObject& model, glm::vec3& eye, float& znear, float& zfar, DirectionalLight& lightSource) {
+   model = SceneObject("data/porsche.obj", glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.0, 0.0, 0.0));
+   eye = glm::vec3(50.0, 20.0, 100.0);
+   lightSource.intensity = 1.0f;
+   lightSource.dir = glm::vec3(0.5, 2.0, 1.0);
+   znear = 20.0f;
+   zfar = 1000.0f;
+}
+
+void loadRose(SceneObject& model, glm::vec3& eye, float& znear, float& zfar, DirectionalLight& lightSource) {
+   model = SceneObject("data/rose+vase.obj", glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.0, 0.0, 0.0));
+   eye = glm::vec3(0.0, 60.0, 200.0);
+   lightSource.intensity = 1.0f;
+   lightSource.dir = glm::vec3(0.5, 2.0, 1.0);
+   znear = 20.0f;
+   zfar = 1000.0f;
+}
+
+void loadHead(SceneObject& model, glm::vec3& eye, float& znear, float& zfar, DirectionalLight& lightSource) {
+   model = SceneObject("data/head.obj", glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), glm::vec3(3.0 * M_PI / 2.0 * 0.92, 0.0, 0.1 * M_PI / 2.0));
+   eye = glm::vec3(0.0, 4.0, 8.0);
+   lightSource.intensity = 1.0f;
+   lightSource.dir = glm::vec3(0.5, 1.0, 1.0);
+   znear = 1.0f;
+   zfar = 1000.0f;
+}
+
+void loadSoccerBall(SceneObject& model, glm::vec3& eye, float& znear, float& zfar, DirectionalLight& lightSource) {
+   model = SceneObject("data/soccerball.obj", glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), glm::vec3(30.0f * M_PI / 180.0, 0.0, 0.0));
+   eye = glm::vec3(0.0, 5.0, 20.0);
+   lightSource.intensity = 1.0f;
+   lightSource.dir = glm::vec3(0.5, 2.0, 1.0);
+   znear = 5.0f;
+   zfar = 1000.0f;
+}
+
+void loadF16(SceneObject& model, glm::vec3& eye, float& znear, float& zfar, DirectionalLight& lightSource) {
+   model = SceneObject("data/f-16.obj", glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.0, -0.5 * M_PI / 2.0, 0.0));
+   eye = glm::vec3(-7.0, 12.0, 10.0);
+   lightSource.intensity = 1.0f;
+   lightSource.dir = glm::vec3(0.5, 2.0, 1.0);
+   znear = 2.0f;
+   zfar = 1000.0f;
 }
