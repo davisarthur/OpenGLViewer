@@ -25,6 +25,9 @@ user would like to read from a file stored at the path ```ZBufferSaves/save3.txt
 In order to run my script, you must have the matplotlib library installed. This can be installed using the following
 command: ```pip3 install matplotlib```
 
-Once matplotlib is installed, my program can be run via the following command: ```python3 plotZBuffer.py```
+Once matplotlib is installed, my program can be run via the following command: 
+```
+python3 plotZBuffer.py
+```
 
 
