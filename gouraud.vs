@@ -15,15 +15,13 @@ void main()
 {
    gl_Position = transformMatrix * modelMatrix * vec4(aPos, 1.0);
    vec4 vertexPosition = modelMatrix * vec4(aPos, 1.0);
-   vec4 transformedNormal4 = modelMatrix * vec4(normal, 1.0);
-   vec3 transformedNormal = normalize(vec3(transformedNormal4.x, transformedNormal4.y, transformedNormal4.z));
+   vec3 transformedNormal = normalize(mat3(modelMatrix) * normal);
    vec3 ambient = Ka;
    vec3 diffuse = Kd * max(0, dot(lightDir, transformedNormal));
-   vec4 eyeDir4 = vec4(eye, 1.0) - vertexPosition;
-   vec3 eyeDir = normalize(vec3(eyeDir4.x, eyeDir4.y, eyeDir4.z));
-   vec3 h = normalize(lightDir + eyeDir);
+   vec3 eyeDir = normalize(eye - vec3(vertexPosition));
+   vec3 reflectDir = reflect(lightDir, transformedNormal);
    vec3 specular;
-   float specularIntensity = pow(max(0.0, dot(transformedNormal, h)), phongExp / 2.0);
+   float specularIntensity = pow(max(0.0, dot(eyeDir, reflectDir)), phongExp);
    // pow operation can return Nan eg. pow(0, 0)
    if (isnan(specularIntensity)) {
       specular = vec3(0.0);

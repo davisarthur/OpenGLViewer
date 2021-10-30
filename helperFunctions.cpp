@@ -261,8 +261,8 @@ void loadRose(SceneObject& model, glm::vec3& eye, float& znear, float& zfar, Dir
 }
 
 void loadHead(SceneObject& model, glm::vec3& eye, float& znear, float& zfar, DirectionalLight& lightSource) {
-   model = SceneObject("data/head.obj", glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), glm::vec3(3.0 * M_PI / 2.0 * 0.92, 0.0, 0.1 * M_PI / 2.0));
-   eye = glm::vec3(0.0, 4.0, 8.0);
+   model = SceneObject("data/head.obj", glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), glm::vec3(3.0 * M_PI / 2.0 * 0.92, 0.0, 0.0));
+   eye = glm::vec3(0.0, 4.0, 20.0);
    lightSource.intensity = 1.0f;
    lightSource.dir = glm::vec3(0.5, 1.0, 1.0);
    znear = 1.0f;

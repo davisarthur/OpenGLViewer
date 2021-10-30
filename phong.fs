@@ -1,5 +1,5 @@
 #version 330 core
-in vec4 vertexPosition;
+in vec3 vertexPosition;
 in vec3 transformedNormal;
 in vec3 Ka;
 in vec3 Kd;
@@ -14,14 +14,13 @@ void main()
    vec3 normal = normalize(transformedNormal);
    vec3 ambient = Ka;
    vec3 diffuse = Kd * max(0.0, dot(lightDir, normal));
-   vec4 eyeDir4 = vec4(eye, 1.0) - vertexPosition;
-   vec3 eyeDir = normalize(vec3(eyeDir4.x, eyeDir4.y, eyeDir4.z));
-   vec3 h = normalize(lightDir + eyeDir);
+   vec3 eyeDir = normalize(eye - vertexPosition);
+   vec3 reflectDir = reflect(lightDir, normal);
    vec3 specular;
-   float specularIntensity = pow(max(0.0, dot(normal, h)), phongExp / 2.0);
+   float specularIntensity = pow(max(0.0, dot(eyeDir, reflectDir)), phongExp);
    // pow operation can return Nan eg. pow(0, 0)
    if (isnan(specularIntensity)) {
-      specular = vec3(1.0, 0.0, 0.0);
+      specular = vec3(0.0);
    }
    else {
       specular = Ks * specularIntensity;
